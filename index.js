@@ -1,5 +1,7 @@
 'use strict';
 
+require('dotenv').config();
+require('./lib/db');
 // const { graphql, buildSchema } = require('graphql')
 // const { buildSchema } = require('graphql');
 const { makeExecutableSchema } = require('graphql-tools');
