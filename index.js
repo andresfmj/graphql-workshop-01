@@ -1,31 +1,20 @@
-'use strict'
+'use strict';
 
-const { graphql, buildSchema } = require('graphql');
+// const { graphql, buildSchema } = require('graphql')
+const { buildSchema } = require('graphql');
 const express = require('express');
 const { graphqlHTTP } = require('express-graphql');
+const { readFileSync } = require('fs');
+const { join } = require('path');
+const resolvers = require('./lib/resolvers')
 
 const app = express();
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3000;
 
 // definir el esquema
-const schema = buildSchema(`
-    type Query {
-        "Retorna un saludo"
-        hello: String,
-        "Retorna otro saludo"
-        saludo: String
-    }
-`)
-
-// configurar los resolvers
-const resolvers = {
-    hello: () => {
-        return 'Hola Mundo'
-    },
-    saludo: () => {
-        return 'Hola a todos!!'
-    }
-}
+const schema = buildSchema(
+	readFileSync(join(__dirname, 'lib', 'schema.graphql'), 'utf-8')
+);
 
 // ejecutar el schema query hello
 // graphql(schema, '{ hello, saludo }', resolvers)
@@ -33,12 +22,15 @@ const resolvers = {
 //     console.log(data)
 // })
 
-app.use('/api', graphqlHTTP({
-    schema,
-    rootValue: resolvers,
-    graphiql: true
-}))
+app.use(
+	'/api',
+	graphqlHTTP({
+		schema,
+		rootValue: resolvers,
+		graphiql: true,
+	})
+);
 
 app.listen(port, () => {
-    console.log(`server is listening on port ${port}`)
-})
+	console.log(`server is listening on port ${port}`);
+});
